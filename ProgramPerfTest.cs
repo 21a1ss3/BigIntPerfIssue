@@ -58,6 +58,7 @@ namespace ConcurrentCollectionsPerfTest
             Console.WriteLine("Job done!");
         }
 
+        //global collection
         public static void Case1()
         {
             Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -103,7 +104,7 @@ namespace ConcurrentCollectionsPerfTest
             Console.WriteLine("Job done!");
         }
 
-
+        //local collection
         public static void Case2()
         {
             Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -150,6 +151,7 @@ namespace ConcurrentCollectionsPerfTest
             Console.WriteLine("Job done!");
         }
 
+        //collections init per task(thread)
         public static void Case3()
         {
             Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -194,6 +196,7 @@ namespace ConcurrentCollectionsPerfTest
             Console.WriteLine("Job done!");
         }
 
+        //local var collection inside task (no common array)
         public static void Case4()
         {
             Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -239,7 +242,7 @@ namespace ConcurrentCollectionsPerfTest
         }
 
 
-
+        //using custom linked list
         public static void Case5()
         {
             Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -284,6 +287,7 @@ namespace ConcurrentCollectionsPerfTest
             Console.WriteLine("Job done!");
         }
 
+        //using just pre-allocated list
         public static void Case6()
         {
             Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -328,5 +332,139 @@ namespace ConcurrentCollectionsPerfTest
             Console.WriteLine("Job done!");
         }
 
+        //using Linked List for longs
+        public static void Case7()
+        {
+            Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
+
+            LinkedList<ulong>[] bigInts;
+            uint threadCount = 16;
+
+            bigInts = new LinkedList<ulong>[threadCount];
+
+            Task[] tasks = new Task[threadCount];
+
+            for (uint i = 0; i < tasks.Length; i++)
+            {
+                uint taskInd = i;
+
+                tasks[i] = Task.Run(() =>
+                {
+                    bigInts[taskInd] = new LinkedList<ulong>();
+
+                    uint iter = 0;
+                    try
+                    {
+
+                        while (true)
+                        {
+                            bigInts[taskInd].AddLast(((ulong)iter) * threadCount + taskInd);
+                            iter++;
+
+                            if (bigInts[taskInd].Count == 1_000_000)
+                                bigInts[taskInd].Clear();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                });
+            }
+
+            Task.WaitAll(tasks);
+
+            Console.WriteLine("Job done!");
+        }
+
+        //using List for BigInts
+        public static void Case8()
+        {
+            Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
+
+            List<BigInteger>[] bigInts;
+            int threadCount = 16;
+
+            bigInts = new List<BigInteger>[threadCount];
+
+            Task[] tasks = new Task[threadCount];
+
+            for (int i = 0; i < tasks.Length; i++)
+            {
+                int taskInd = i;
+
+                tasks[i] = Task.Run(() =>
+                {
+                    bigInts[taskInd] = new List<BigInteger>(100_000);
+
+                    BigInteger iter = 0;
+                    try
+                    {
+
+                        while (true)
+                        {
+                            bigInts[taskInd].Add(iter * threadCount + taskInd);
+                            iter++;
+
+                            if (bigInts[taskInd].Count == 1_000_000)
+                                bigInts[taskInd].Clear();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                });
+            }
+
+            Task.WaitAll(tasks);
+
+            Console.WriteLine("Job done!");
+        }
+
+        //using SortedSet
+        public static void Case9()
+        {
+            Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().Name);
+
+            SortedSet<ulong>[] bigInts;
+            uint threadCount = 16;
+
+            bigInts = new SortedSet<ulong>[threadCount];
+
+            Task[] tasks = new Task[threadCount];
+
+            for (uint i = 0; i < tasks.Length; i++)
+            {
+                uint taskInd = i;
+
+                tasks[i] = Task.Run(() =>
+                {
+                    bigInts[taskInd] = new SortedSet<ulong>();
+
+                    uint iter = 0;
+                    try
+                    {
+
+                        while (true)
+                        {
+                            bigInts[taskInd].Add(((ulong)iter) * threadCount + taskInd);
+                            iter++;
+
+                            if (bigInts[taskInd].Count == 1_000_000)
+                                bigInts[taskInd].Clear();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                });
+            }
+
+            Task.WaitAll(tasks);
+
+            Console.WriteLine("Job done!");
+        }
     }
 }
