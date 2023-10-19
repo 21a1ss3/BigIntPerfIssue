@@ -13,7 +13,7 @@ namespace ConcurrentCollectionsPerfTest
         static void Main(string[] args)
         {
             //MemEater();
-            Case6();
+            Case1();
         }
 
         public static void MemEater()
